@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Bootstrap Example</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="../css/bootstrap.min.css">
+  <link rel="stylesheet" href="../css/cv_style.css?v=1002">
+  <script src="../js/jquery-3.4.1.js"></script>
+  <script src="../js/popper.min.js"></script>
+  <script src="../js/bootstrap.min.js"></script>
+  <script src="../js/cv_js.js?v=1011"></script>
+  <link href="../fontawesome/css/all.css" rel="stylesheet">
+</head>
+<body>
+<div align="center" class="container" id="content_box">
+	<div  class="card col-sm-12 col-md-12 ">
+		<div  class="card-body">
+			<h4>ผู้ใช้</h4>
+				<div align="right" class="col-md-12">
+					<button type="button" onclick="open_add()" class="btn" data-toggle="modal" data-target="#modal_p_user">
+						<i class="fas fa-plus-square fa-2x"></i>
+					</button>
+
+					<button type="button" class="btn"></button>
+				</div>
+			<table class="table table-hover">
+				<thead>
+					<tr>
+						<th>ลำดับ</th>
+						<th>ชื่อ-สกุล</th>
+						<th>สถานะผู้ใช้</th>
+						<th>ดู</th>
+					</tr>
+				</thead>
+			    <tbody id="p_user_content">
+			      
+			    </tbody>
+			  </table>
+	 <!-- The Modal -->
+	<div class="modal fade" id="modal_p_user" >
+		<div class="modal-dialog modal-lg" >
+			<div class="modal-content">
+	        <!-- Modal Header -->
+				<div class="modal-header" id="head_stage">
+					<h4 class="modal-title">ข้อมูลผู้ใช้</h4>
+					<button type="button" onclick="clear_input()" class="close" data-dismiss="modal">&times;</button>
+				</div>
+	        <!-- Modal body -->
+	        <form id="frm_p_user" enctype="multipart/form-data">
+				<div class="modal-body">
+					<div class="col-md-12 mb-12">
+				      <label class="cv_keep-left" for="u_img"></label>
+					    <div class="input-group">
+					        <div align="center">
+					        	<img id="sh_img" class="rounded" width="50%">
+					        </div>
+					    </div>
+				    </div>
+					<div class="col-md-12 mb-12">
+				      <label class="cv_keep-left" for="u_name">ชื่อผู้ใช้</label>
+					    <div class="input-group">
+					        <div class="input-group-prepend">
+					          <span class="input-group-text" ><i class="fas fa-tags"></i></span>
+					        </div>
+					        <input type="hidden" name="u_id" id="u_id">
+					        <input type="text" class="form-control" id="u_name" name="u_name" oninvalid="this.setCustomValidity('ชื่อผู้ใช้')"required oninput="this.setCustomValidity('')" placeholder="ชื่อผู้ใช้">
+					        &nbsp;
+					        <input type="text" class="form-control" id="u_lname" name="u_lname" oninvalid="this.setCustomValidity('นามสกุล')"required oninput="this.setCustomValidity('')" placeholder="นามสกุล">
+					    </div>
+				    </div>
+				    <div class="col-md-12 mb-12">
+				      <label class="cv_keep-left" for="u_email">Email</label>
+					    <div class="input-group">
+					        <div class="input-group-prepend">
+					          <span class="input-group-text" ><i class="fas fa-tag"></i></span>
+					        </div>
+					        <input type="email" class="form-control" id="u_email" name="u_email" oninvalid="this.setCustomValidity('ประเภทผู้ใช้')" required oninput="this.setCustomValidity('')" placeholder="user@email.com">
+					    </div>
+				    </div>
+				    <div class="col-md-12 mb-12">
+				      <label class="cv_keep-left" for="u_password">รหัสผ่าน</label>
+					    <div class="input-group">
+					        <div class="input-group-prepend">
+					          <span class="input-group-text" ><i class="fas fa-key"></i></i></span>
+					        </div>
+					        <input type="hidden" class="form-control" id="u_password_old" name="u_password_old">
+					        <input type="password" class="form-control" id="u_password" name="u_password" oninvalid="this.setCustomValidity('รหัสผ่าน')"required oninput="this.setCustomValidity('')" placeholder="รหัสผ่าน">
+					    </div>
+					    <div class="input-group">
+					        <div class="input-group-prepend">
+					          <span class="input-group-text" ><i class="fas fa-key"></i></span>
+					        </div>
+					        <input type="password" class="form-control" id="u_password_confirm" name="u_password_confirm" oninvalid="this.setCustomValidity('ยืนยันรหัสผ่าน')"required oninput="this.setCustomValidity('')" placeholder="ยืนยันรหัสผ่าน">
+					    </div>
+				    </div>
+				    <div class="col-md-12 mb-12">
+				      <label class="cv_keep-left" for="u_img">เบอร์โทร</label>
+					    <div class="input-group">
+					        <div class="input-group-prepend">
+					          <span class="input-group-text" ><i class="fas fa-phone-square-alt"></i></span>
+					        </div>
+					        <input type="text" class="form-control" id="u_tel" name="u_tel" oninvalid="this.setCustomValidity('เบอร์โทร')"required oninput="this.setCustomValidity('')" maxlength="10" placeholder="081987654321">
+				      </div>
+				    </div>
+				    <div class="col-md-12 mb-12">
+				      <label class="cv_keep-left" for="u_img">ภาพ</label>
+					    <div class="input-group">
+					        <div class="input-group-prepend">
+					          <span class="input-group-text" ><i class="fas fa-images"></i></span>
+					        </div>
+					        <button type="button" onclick="upload('#u_img')">เลือกรูปภาพ</button>
+					        <input class="form-control" type="file" onchange="img_preview(this,'sh_img')" id="u_img" name="u_img" class="" style="display:none">
+					    </div>
+				    </div>
+				    <div id="frm"></div>
+				    <div id="msg"></div>
+				</div>
+			</form>
+	        <!-- Modal footer -->
+				<div class="modal-footer" id="modal_p_user_foot">	
+					<div id="mng"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+</body>
+</html>
+
+<script type="text/javascript">
+	var data;
+	// -------------------------- onload ---------------------------//
+	let link="http://localhost/php_project/call_controller/api.php";
+	load_p_user();
+	load_store_type();
+	open_add();
+	load_p_user();
+	$("#modal_p_user").modal();
+	$("title").text(title());
+	
+
+	// ------------------------- function -------------------------//
+	function open_add(){
+		let txt=`<button id="btn_save" onclick="add()" type="button" class="btn btn-success" data-dismiss=""><i class="fas fa-save fa-1x"></i> บันทึก</button>`;
+		$("#mng").html(txt);
+	}
+	function sh_data(u_id,u_email,u_password,u_name,u_lname,u_status,u_tel,u_img){
+		let sta=(u_status==1?'#u_status1':(u_status==2?'#u_status2':'#u_status0'));
+		let css=(u_status==0?$("#head_stage").css({"background-color":"#a75454","color":"#fff"}):$("#head_stage").css({"background-color":"#7ec282","color":"#fff"}));
+
+		let frm="";
+		frm+=`<div class="col-md-12 mb-12" >
+				      <label class="cv_keep-left" for="u_img">สถานะผู้ใช้</label>
+					    <div class="input-group" >
+					        <div class="form-check col-sm-4">
+							  <input class="form-check-input" type="radio" name="u_status" id="u_status0" value="0" >
+							  <label class="form-check-label" for="u_status">
+							    เพิกถอนสิทธิ
+							  </label>
+							</div>
+							<div class="form-check col-sm-4">
+							  <input class="form-check-input" type="radio" name="u_status" id="u_status1" value="1" >
+							  <label class="form-check-label" for="u_status">
+							    ผู้ใช้ทั่วไป
+							  </label>
+							</div>
+							<div class="form-check col-sm-4">
+							  <input class="form-check-input" type="radio" name="u_status" id="u_status2" value="2" >
+							  <label class="form-check-label" for="u_status">
+							    เจ้าของร้าน
+							  </label>
+							</div>
+					    </div>
+				    </div>`;
+		let txt=`<button id="btn_del" onclick="del()" type="button" class="btn btn-danger" data-dismiss=""><i class="fas fa-trash-alt fa-1x"></i> ลบ</button>
+		<button id="btn_save" onclick="update()" type="button" class="btn btn-success" data-dismiss=""><i class="fas fa-save fa-1x"></i> บันทึก</button>`;
+
+		$("#frm").html(frm);
+		$("#sh_img").attr('src',u_img);
+		
+		$("#u_id").val(u_id);
+		$("#u_name").val(u_name);
+		$("#u_lname").val(u_lname);
+		$("#u_email").val(u_email);
+
+		$(sta).prop('checked', true);
+		$("#modal_p_user").modal();
+		
+		$("#mng").html(txt);
+	}
+	function clear_input(){
+		$("#sh_img").attr('src','');
+		$("#u_name").val("");
+		$("#st_id").val("");
+		$("#u_id").val("");
+	}
+	function add(){
+		$("#msg").html("");
+		let sta=0;
+		if($("#st_id").val()===""){sta++;}
+		if($("#u_name").val()===""){sta++;}
+		if($("#u_id").val()===""){sta++;}
+		if(sta!=0){$("#frm_p_user").addClass("was-validated");return false;}
+		else{
+			let f_data=new FormData();
+			let data = $("#frm_p_user").serializeArray();
+			let files = $("#u_img")[0].files[0]; 
+			$.each(data,(key,val)=>{
+				f_data.append(val.name,val.value);
+			});
+			f_data.append("p_user_add",true);
+			f_data.append("u_img",files);
+			event.preventDefault();
+			$.ajax({
+				type: "POST",
+	 			url: link,
+	 			data: f_data,
+				contentType: false,
+				processData: false,
+			}).done((res)=> {
+				let data=JSON.parse(res);
+				if(data.status){
+					$("#modal_p_user").modal('toggle');
+					load_p_user();
+					clear_input();
+				}else{
+					$("#msg").html("<div style='color:#bd4646'>"+data.msg+"</div>");
+				}	 				
+	 		});
+		}
+	}	
+	function update(){
+			$("#msg").html("");
+			let f_data=new FormData();
+			let data = $("#frm_p_user").serializeArray();
+			let files = $("#u_img")[0].files[0]; 
+			$.each(data,(key,val)=>{
+				f_data.append(val.name,val.value);
+			});
+			f_data.append("p_user_update",true);
+			f_data.append("u_img",files);
+			event.preventDefault();
+			$.ajax({
+				type: "POST",
+	 			url: link,
+	 			data: f_data,
+				contentType: false,
+				processData: false,
+			}).done((res)=> {
+				let data=JSON.parse(res);
+				if(data.status){
+					$("#modal_p_user").modal('toggle');
+					$("#t_name").val("");
+					load_p_user();
+					clear_input();
+				}else{
+					$("#msg").html("<div style='color:#bd4646'>"+data.msg+"</div>");
+				}
+
+			});
+	}	
+	function del(){
+			$("#msg").html("");
+			$.ajax({
+				type:"POST",
+				url:link,
+				data:{
+					"s_id":$("#s_id").val(),
+					"p_user_del":true
+				}
+			}).done((res)=>{
+				let data=JSON.parse(res);
+				if(data.status){
+					$("#modal_p_user").modal('toggle');
+					load_p_user();
+					clear_input();
+				}else{
+					$("#msg").html("<div style='color:#bd4646'>"+data.msg+"</div>");
+				}
+
+			});
+	}
+	function load_store_type(){
+		let txt=`<option value="0" disabled selected>เลือกประเภทผู้ใช้</option>`;
+			$.ajax({
+				type:"POST",
+				url:link,
+				data:"load_store_type"
+			}).done((res)=>{
+				let data=JSON.parse(res);
+				if(!data.msg){
+					$.each(data,(i, item)=>{
+						txt+=`<option value="${item.st_id}">${item.st_name}</option>`
+					});
+				}
+				$("#st_id").html(txt);
+			});
+	}
+	function load_p_user(){
+		let txt=`<option value="0" disabled selected>เลือกเจ้าของร้าน</option>`;
+			$.ajax({
+				type:"POST",
+				url:link,
+				data:"load_p_user"
+			}).done((res)=>{
+				let data=JSON.parse(res);
+				if(!data.msg){
+					$.each(data,(i, item)=>{
+						txt+=`<option value="${item.u_id}">${item.u_name+' '+item.u_lname}</option>`
+					});
+				}
+				$("#u_id").html(txt);
+			});
+	}
+	function load_p_user(filter){
+			let txt;
+			$.ajax({
+				type:"POST",
+				url:link,
+				data:{
+					"load_p_user":true,
+					"filter":filter
+				}
+			}).done((res)=>{
+				var data=JSON.parse(res);
+				if(!data.msg){
+					$.each(data,(i, item)=>{
+						let sta=(item.u_status==1?'online':'เพิกถอนสิทธิ');
+						let css=(item.u_status==1?`style="background-color:#7ec282;color:#fff"`:`style="background-color:#a75454;;color:#fff"`);
+						txt+=`<tr ${css}>
+					        <td>${i+1}</td>
+					        <td>${item.u_name}</td>
+					        <td>${sta}</td>
+					        <td><button style="color:#fff" type="button" onclick="sh_data('${item.s_id}','${item.u_name}','${item.st_id}','${item.u_id}','${item.u_status}','${item.u_img}')" class="btn">
+				        		<i  class="fas fa-book-open fa-2x"></i>
+				        	</button>`;
+						
+					});
+				}else{
+					txt=`<tr><td colspan='3'>no data</td></tr>`;
+				}
+				$("#p_user_content").html(txt);
+			});
+	}
+
+</script>
+

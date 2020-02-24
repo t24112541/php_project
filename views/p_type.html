@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Bootstrap Example</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="../css/bootstrap.min.css">
+  <link rel="stylesheet" href="../css/cv_style.css?v=1002">
+  <script src="../js/jquery-3.4.1.js"></script>
+  <script src="../js/popper.min.js"></script>
+  <script src="../js/bootstrap.min.js"></script>
+  <script src="../js/cv_js.js?v=1009"></script>
+  <link href="../fontawesome/css/all.css" rel="stylesheet">
+</head>
+<body>
+<div align="center" class="container" id="content_box">
+	<div  class="card col-sm-12 col-md-6 ">
+		<div  class="card-body">
+			<h4>ประเภทสินค้า</h4>
+				<div align="right" class="col-md-12">
+					<button type="button" onclick="open_add()" class="btn" data-toggle="modal" data-target="#modal_p_type">
+						<i class="fas fa-plus-square fa-2x"></i>
+					</button>
+
+					<button type="button" class="btn"></button>
+				</div>
+			<table class="table table-hover">
+				<thead>
+					<tr>
+						<th>ลำดับ</th>
+						<th>ชื่อประเภทสินค้า</th>
+						<th>ดู</th>
+					</tr>
+				</thead>
+			    <tbody id="p_type_content">
+			      
+			    </tbody>
+			  </table>
+	 <!-- The Modal -->
+	<div class="modal fade" id="modal_p_type">
+		<div class="modal-dialog modal-sm">
+			<div class="modal-content">
+	        <!-- Modal Header -->
+				<div class="modal-header">
+					<h4 class="modal-title">ข้อมูลประเภทสินค้า</h4>
+					<button type="button" onclick="clear_input()" class="close" data-dismiss="modal">&times;</button>
+				</div>
+	        <!-- Modal body -->
+				<div class="modal-body">
+					<div class="col-md-12 mb-12">
+				      <label class="cv_keep-left" for="t_name
+">ชื่อประเภทสินค้า</label>
+				      <div class="input-group">
+				        <div class="input-group-prepend">
+				          <span class="input-group-text" ><i class="fas fa-user-tag"></i></span>
+				        </div>
+				        <input type="hidden" name="t_id" id="t_id">
+				        <input type="text" class="form-control" id="t_name" name="" oninvalid="this.setCustomValidity('	ชื่อประเภทสินค้า')"required oninput="this.setCustomValidity('')">
+				      </div>
+				      <div id="msg"></div>
+				    </div>
+				</div>
+	        <!-- Modal footer -->
+				<div class="modal-footer" id="modal_p_type_foot">	
+					<div id="mng">
+						
+					</div>
+					
+
+				</div>
+			</div>
+		</div>
+	</div>
+	
+</div>
+</body>
+</html>
+
+<script type="text/javascript">
+	$("title").text(title());
+	let link="http://localhost/php_project/call_controller/api.php";
+	function open_add(){
+		let txt=`<button id="btn_save" onclick="add()" type="button" class="btn btn-success" data-dismiss=""><i class="fas fa-save fa-1x"></i> บันทึก</button>`;
+		$("#mng").html(txt);
+	}
+	function sh_data(id,data){
+		$("#modal_p_type").modal();
+		let txt=`<button id="btn_del" onclick="del()" type="button" class="btn btn-danger" data-dismiss=""><i class="fas fa-trash-alt fa-1x"></i> ลบ</button>
+		<button id="btn_save" onclick="update()" type="button" class="btn btn-success" data-dismiss=""><i class="fas fa-save fa-1x"></i> บันทึก</button>`;
+		$("#t_id").val(id);
+		$("#t_name").val(data);
+		$("#mng").html(txt);
+		// $(document).on('keypress',function(e) {
+		// 	if(e.which == 13) {
+		// 		update();
+		// 	}
+		// });
+	}
+	function clear_input(){
+		$("#t_name").val("");
+	}
+	function add(){
+			$("#msg").html("");
+			$.ajax({
+				type:"POST",
+				url:link,
+				data:{
+					"t_name":$("#t_name").val(),
+					"p_type_add":true
+				}
+			}).done((res)=>{
+				let data=JSON.parse(res);
+				if(data.status){
+					$("#modal_p_type").modal('toggle');
+					$("#t_name").val("");
+					load_p_type();
+				}else{
+					$("#msg").html("<div style='color:#bd4646'>"+data.msg+"</div>");
+				}
+
+			});
+	}	
+	function update(){
+			$("#msg").html("");
+			$.ajax({
+				type:"POST",
+				url:link,
+				data:{
+					"t_id":$("#t_id").val(),
+					"t_name":$("#t_name").val(),
+					"p_type_update":true
+				}
+			}).done((res)=>{
+				let data=JSON.parse(res);
+				if(data.status){
+					$("#modal_p_type").modal('toggle');
+					$("#t_name").val("");
+					load_p_type();
+				}else{
+					$("#msg").html("<div style='color:#bd4646'>"+data.msg+"</div>");
+				}
+
+			});
+	}	
+	function del(){
+			$("#msg").html("");
+			$.ajax({
+				type:"POST",
+				url:link,
+				data:{
+					"t_id":$("#t_id").val(),
+					"p_type_del":true
+				}
+			}).done((res)=>{
+				let data=JSON.parse(res);
+				if(data.status){
+					$("#modal_p_type").modal('toggle');
+					$("#t_name").val("");
+					load_p_type();
+				}else{
+					$("#msg").html("<div style='color:#bd4646'>"+data.msg+"</div>");
+				}
+
+			});
+	}
+	function load_p_type(){
+			let txt;
+			$.ajax({
+				type:"POST",
+				url:link,
+				data:"load_p_type"
+			}).done((res)=>{
+				let data=JSON.parse(res);
+				if(!data.msg){
+					$.each(data,(i, item)=>{
+						txt+=`<tr>
+					        <td>${i+1}</td>
+					        <td>${item.t_name}</td>
+					        <td><button type="button" onclick="sh_data(${item.t_id},'${item.t_name}')" class="btn">
+				        		<i class="fas fa-book-open fa-2x"></i>
+				        	</button></td>
+						</tr>`
+					});
+				}else{
+					txt=`<tr><td colspan='3'>no data</td></tr>`;
+				}
+				$("#p_type_content").html(txt);
+			});
+	}
+	load_p_type();
+</script>
+

@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Bootstrap Example</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="../css/bootstrap.min.css">
+  <link rel="stylesheet" href="../css/cv_style.css?v=1002">
+  <script src="../js/jquery-3.4.1.js"></script>
+  <script src="../js/popper.min.js"></script>
+  <script src="../js/bootstrap.min.js"></script>
+  <script src="../js/cv_js.js?v=1011"></script>
+  <link href="../fontawesome/css/all.css" rel="stylesheet">
+</head>
+<body>
+<div align="center" class="container" id="content_box">
+	<div  class="card col-sm-12 col-md-12 ">
+		<div  class="card-body">
+			<h4>ร้านค้า</h4>
+				<div align="right" class="col-md-12">
+					<button type="button" onclick="open_add()" class="btn" data-toggle="modal" data-target="#modal_p_store">
+						<i class="fas fa-plus-square fa-2x"></i>
+					</button>
+
+					<button type="button" class="btn"></button>
+				</div>
+			<table class="table table-hover">
+				<thead>
+					<tr>
+						<th>ลำดับ</th>
+						<th>ชื่อร้านค้า</th>
+						<th>สถานะร้านค้า</th>
+						<th>ดู</th>
+					</tr>
+				</thead>
+			    <tbody id="p_store_content">
+			      
+			    </tbody>
+			  </table>
+	 <!-- The Modal -->
+	<div class="modal fade" id="modal_p_store" >
+		<div class="modal-dialog modal-lg" >
+			<div class="modal-content">
+	        <!-- Modal Header -->
+				<div class="modal-header" id="head_stage">
+					<h4 class="modal-title">ข้อมูลร้านค้า</h4>
+					<button type="button" onclick="clear_input()" class="close" data-dismiss="modal">&times;</button>
+				</div>
+	        <!-- Modal body -->
+	        <form id="frm_p_store" enctype="multipart/form-data">
+				<div class="modal-body">
+					<div class="col-md-12 mb-12">
+				      <label class="cv_keep-left" for="s_img"></label>
+					    <div class="input-group">
+					        <div align="center">
+					        	<img id="sh_img" class="rounded" width="50%">
+					        </div>
+					    </div>
+				    </div>
+					<div class="col-md-12 mb-12">
+				      <label class="cv_keep-left" for="s_name">ชื่อร้านค้า</label>
+					    <div class="input-group">
+					        <div class="input-group-prepend">
+					          <span class="input-group-text" ><i class="fas fa-tags"></i></span>
+					        </div>
+					        <input type="hidden" name="s_id" id="s_id">
+					        <input type="text" class="form-control" id="s_name" name="s_name" oninvalid="this.setCustomValidity('ชื่อร้านค้า')"required oninput="this.setCustomValidity('')" placeholder="ชื่อร้านค้า">
+					    </div>
+				    </div>
+				    <div class="col-md-12 mb-12">
+				      <label class="cv_keep-left" for="st_id">ประเภทร้านค้า</label>
+					    <div class="input-group">
+					        <div class="input-group-prepend">
+					          <span class="input-group-text" ><i class="fas fa-tag"></i></span>
+					        </div>
+					        <select class="form-control" id="st_id" name="st_id" oninvalid="this.setCustomValidity('ประเภทร้านค้า')"required oninput="this.setCustomValidity('')">
+					        </select>
+					    </div>
+				    </div>
+				    <div class="col-md-12 mb-12">
+				      <label class="cv_keep-left" for="u_id">เจ้าของร้านค้า</label>
+					    <div class="input-group">
+					        <div class="input-group-prepend">
+					          <span class="input-group-text" ><i class="fas fa-user-tag "></i></span>
+					        </div>
+					        <select class="form-control" id="u_id" name="u_id" oninvalid="this.setCustomValidity('เจ้าของร้านค้า')"required oninput="this.setCustomValidity('')">
+					        </select>
+					    </div>
+				    </div>
+				    <div class="col-md-12 mb-12">
+				      <label class="cv_keep-left" for="s_img">ภาพ</label>
+					    <div class="input-group">
+					        <div class="input-group-prepend">
+					          <span class="input-group-text" ><i class="fas fa-images"></i></span>
+					        </div>
+					        <button type="button" onclick="upload('#s_img')">เลือกรูปภาพ</button>
+					        <input class="form-control" type="file" onchange="img_preview(this,'sh_img')" id="s_img" name="s_img" class="" style="display:none">
+					    </div>
+				    </div>
+				    <div id="frm"></div>
+				    <div id="msg"></div>
+				</div>
+			</form>
+	        <!-- Modal footer -->
+				<div class="modal-footer" id="modal_p_store_foot">	
+					<div id="mng">
+						
+					</div>
+					
+
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+</body>
+</html>
+
+<script type="text/javascript">
+	var data;
+	// -------------------------- onload ---------------------------//
+	let link="http://localhost/php_project/call_controller/api.php";
+	load_p_store();
+	load_store_type();
+	open_add();
+	load_p_user();
+	// $("#modal_p_store").modal();
+	$("title").text(title());
+	
+
+	// ------------------------- function -------------------------//
+	function open_add(){
+		let txt=`<button id="btn_save" onclick="add()" type="button" class="btn btn-success" data-dismiss=""><i class="fas fa-save fa-1x"></i> บันทึก</button>`;
+		$("#mng").html(txt);
+	}
+	function sh_data(s_id,s_name,st_id,u_id,s_status,s_img){
+		let sta=(s_status==1?'#s_status1':'#s_status2');
+		
+		let css=(s_status==1?$("#head_stage").css({"background-color":"#7ec282","color":"#fff"}):$("#head_stage").css({"background-color":"#a75454","color":"#fff"}));
+
+		let frm="";
+		frm+=`<div class="col-md-12 mb-12" >
+				      <label class="cv_keep-left" for="s_img">สถานะร้านค้า</label>
+					    <div class="input-group" >
+					        <div class="form-check col-sm-6">
+							  <input class="form-check-input" type="radio" name="s_status" id="s_status1" value="1" >
+							  <label class="form-check-label" for="s_status">
+							    Online
+							  </label>
+							</div>
+							<div class="form-check col-sm-6">
+							  <input class="form-check-input" type="radio" name="s_status" id="s_status2" value="0" >
+							  <label class="form-check-label" for="s_status">
+							    เพิกถอนสิทธิ
+							  </label>
+							</div>
+					    </div>
+				    </div>`;
+		let txt=`<button id="btn_del" onclick="del()" type="button" class="btn btn-danger" data-dismiss=""><i class="fas fa-trash-alt fa-1x"></i> ลบ</button>
+		<button id="btn_save" onclick="update()" type="button" class="btn btn-success" data-dismiss=""><i class="fas fa-save fa-1x"></i> บันทึก</button>`;
+
+		$("#frm").html(frm);
+		$("#sh_img").attr('src',s_img);
+		
+		$("#s_name").val(s_name);
+		$("#st_id").val(st_id);
+		$("#u_id").val(u_id);
+		$("#s_id").val(s_id);
+		$(sta).prop('checked', true);
+		$("#modal_p_store").modal();
+		
+		$("#mng").html(txt);
+	}
+	function clear_input(){
+		$("#sh_img").attr('src','');
+		$("#s_name").val("");
+		$("#st_id").val("");
+		$("#u_id").val("");
+	}
+	function add(){
+		$("#msg").html("");
+		let sta=0;
+		if($("#st_id").val()===""){sta++;}
+		if($("#s_name").val()===""){sta++;}
+		if($("#u_id").val()===""){sta++;}
+		if(sta!=0){$("#frm_p_store").addClass("was-validated");return false;}
+		else{
+			let f_data=new FormData();
+			let data = $("#frm_p_store").serializeArray();
+			let files = $("#s_img")[0].files[0]; 
+			$.each(data,(key,val)=>{
+				f_data.append(val.name,val.value);
+			});
+			f_data.append("p_store_add",true);
+			f_data.append("s_img",files);
+			event.preventDefault();
+			$.ajax({
+				type: "POST",
+	 			url: link,
+	 			data: f_data,
+				contentType: false,
+				processData: false,
+			}).done((res)=> {
+				let data=JSON.parse(res);
+				if(data.status){
+					$("#modal_p_store").modal('toggle');
+					load_p_store();
+					clear_input();
+				}else{
+					$("#msg").html("<div style='color:#bd4646'>"+data.msg+"</div>");
+				}	 				
+	 		});
+		}
+	}	
+	function update(){
+			$("#msg").html("");
+			let f_data=new FormData();
+			let data = $("#frm_p_store").serializeArray();
+			let files = $("#s_img")[0].files[0]; 
+			$.each(data,(key,val)=>{
+				f_data.append(val.name,val.value);
+			});
+			f_data.append("p_store_update",true);
+			f_data.append("s_img",files);
+			event.preventDefault();
+			$.ajax({
+				type: "POST",
+	 			url: link,
+	 			data: f_data,
+				contentType: false,
+				processData: false,
+			}).done((res)=> {
+				let data=JSON.parse(res);
+				if(data.status){
+					$("#modal_p_store").modal('toggle');
+					$("#t_name").val("");
+					load_p_store();
+					clear_input();
+				}else{
+					$("#msg").html("<div style='color:#bd4646'>"+data.msg+"</div>");
+				}
+
+			});
+	}	
+	function del(){
+			$("#msg").html("");
+			$.ajax({
+				type:"POST",
+				url:link,
+				data:{
+					"s_id":$("#s_id").val(),
+					"p_store_del":true
+				}
+			}).done((res)=>{
+				let data=JSON.parse(res);
+				if(data.status){
+					$("#modal_p_store").modal('toggle');
+					load_p_store();
+					clear_input();
+				}else{
+					$("#msg").html("<div style='color:#bd4646'>"+data.msg+"</div>");
+				}
+
+			});
+	}
+	function load_store_type(){
+		let txt=`<option value="0" disabled selected>เลือกประเภทร้านค้า</option>`;
+			$.ajax({
+				type:"POST",
+				url:link,
+				data:"load_store_type"
+			}).done((res)=>{
+				let data=JSON.parse(res);
+				if(!data.msg){
+					$.each(data,(i, item)=>{
+						txt+=`<option value="${item.st_id}">${item.st_name}</option>`
+					});
+				}
+				$("#st_id").html(txt);
+			});
+	}
+	function load_p_user(){
+		let txt=`<option value="0" disabled selected>เลือกเจ้าของร้าน</option>`;
+			$.ajax({
+				type:"POST",
+				url:link,
+				data:"load_p_user"
+			}).done((res)=>{
+				let data=JSON.parse(res);
+				if(!data.msg){
+					$.each(data,(i, item)=>{
+						txt+=`<option value="${item.u_id}">${item.u_name+' '+item.u_lname}</option>`
+					});
+				}
+				$("#u_id").html(txt);
+			});
+	}
+	function load_p_store(filter){
+			let txt;
+			$.ajax({
+				type:"POST",
+				url:link,
+				data:{
+					"load_p_store":true,
+					"filter":filter
+				}
+			}).done((res)=>{
+				var data=JSON.parse(res);
+				if(!data.msg){
+					$.each(data,(i, item)=>{
+						let sta=(item.s_status==1?'online':'เพิกถอนสิทธิ');
+						let css=(item.s_status==1?`style="background-color:#7ec282;color:#fff"`:`style="background-color:#a75454;;color:#fff"`);
+						txt+=`<tr ${css}>
+					        <td>${i+1}</td>
+					        <td>${item.s_name}</td>
+					        <td>${sta}</td>
+					        <td><button style="color:#fff" type="button" onclick="sh_data('${item.s_id}','${item.s_name}','${item.st_id}','${item.u_id}','${item.s_status}','${item.s_img}')" class="btn">
+				        		<i  class="fas fa-book-open fa-2x"></i>
+				        	</button>`;
+						
+					});
+				}else{
+					txt=`<tr><td colspan='3'>no data</td></tr>`;
+				}
+				$("#p_store_content").html(txt);
+			});
+	}
+
+</script>
+

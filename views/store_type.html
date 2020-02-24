@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Bootstrap Example</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="../css/bootstrap.min.css">
+  <link rel="stylesheet" href="../css/cv_style.css?v=1002">
+  <script src="../js/jquery-3.4.1.js"></script>
+  <script src="../js/popper.min.js"></script>
+  <script src="../js/bootstrap.min.js"></script>
+  <script src="../js/cv_js.js?v=1008"></script>
+  <link href="../fontawesome/css/all.css" rel="stylesheet">
+</head>
+<body>
+<div align="center" class="container" id="content_box">
+	<div  class="card col-sm-12 col-md-6 ">
+		<div  class="card-body">
+			<h4>ประเภทร้านค้า</h4>
+				<div align="right" class="col-md-12">
+					<button type="button" onclick="open_add()" class="btn" data-toggle="modal" data-target="#modal_store_type">
+						<i class="fas fa-plus-square fa-2x"></i>
+					</button>
+
+					<button type="button" class="btn"></button>
+				</div>
+			<table class="table table-hover">
+				<thead>
+					<tr>
+						<th>ลำดับ</th>
+						<th>ชื่อประเภทร้านค้า</th>
+						<th>ดู</th>
+					</tr>
+				</thead>
+			    <tbody id="store_content">
+			      <tr>
+			        <td>John</td>
+			        <td>Doe</td>
+			        <td><button type="button" value="500" onclick="myFunction()" class="btn">
+			        		<i class="fas fa-book-open fa-2x"></i>
+			        	</button></td>
+			      </tr>
+			      <tr>
+			        <td>John</td>
+			        <td>Doe</td>
+			        <td>
+			        	<button type="button" value="100" id="detail_store_content" class="btn">
+			        		<i class="fas fa-book-open fa-2x"></i>
+			        	</button>
+			    	</td>
+			      </tr>
+			    </tbody>
+			  </table>
+	 <!-- The Modal -->
+	<div class="modal fade" id="modal_store_type">
+		<div class="modal-dialog modal-sm">
+			<div class="modal-content">
+	        <!-- Modal Header -->
+				<div class="modal-header">
+					<h4 class="modal-title">ข้อมูลประเภทร้านค้า</h4>
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
+	        <!-- Modal body -->
+				<div class="modal-body">
+					<div class="col-md-12 mb-12">
+				      <label class="cv_keep-left" for="st_name">ชื่อประเภทร้านค้า</label>
+				      <div class="input-group">
+				        <div class="input-group-prepend">
+				          <span class="input-group-text" ><i class="fas fa-user-tag"></i></span>
+				        </div>
+				        <input type="hidden" name="st_id" id="st_id">
+				        <input type="text" class="form-control" id="st_name" name="" oninvalid="this.setCustomValidity('	ชื่อประเภทร้านค้า')"required oninput="this.setCustomValidity('')">
+				      </div>
+				      <div id="msg"></div>
+				    </div>
+				</div>
+	        <!-- Modal footer -->
+				<div class="modal-footer" id="modal_store_type_foot">	
+					<div id="mng">
+						
+					</div>
+					
+
+				</div>
+			</div>
+		</div>
+	</div>
+	
+</div>
+</body>
+</html>
+
+<script type="text/javascript">
+	$("title").text(title());
+	let link="http://localhost/php_project/call_controller/api.php";
+	function open_add(){
+		let txt=`<button id="btn_save" onclick="add()" type="button" class="btn btn-success" data-dismiss=""><i class="fas fa-save fa-1x"></i> บันทึก</button>`;
+		$("#mng").html(txt);
+	}
+	function sh_data(id,data){
+		$("#modal_store_type").modal();
+		let txt=`<button id="btn_del" onclick="del()" type="button" class="btn btn-danger" data-dismiss=""><i class="fas fa-trash-alt fa-1x"></i> ลบ</button>
+		<button id="btn_save" onclick="update()" type="button" class="btn btn-success" data-dismiss=""><i class="fas fa-save fa-1x"></i> บันทึก</button>`;
+		$("#st_id").val(id);
+		$("#st_name").val(data);
+		$("#mng").html(txt);
+		// $(document).on('keypress',function(e) {
+		// 	if(e.which == 13) {
+		// 		update();
+		// 	}
+		// });
+	}
+	function add(){
+			$("#msg").html("");
+			$.ajax({
+				type:"POST",
+				url:link,
+				data:{
+					"st_name":$("#st_name").val(),
+					"store_type_add":true
+				}
+			}).done((res)=>{
+				let data=JSON.parse(res);
+				if(data.status){
+					$("#modal_store_type").modal('toggle');
+					$("#st_name").val("");
+					load_store_type();
+				}else{
+					$("#msg").html("<div style='color:#bd4646'>"+data.msg+"</div>");
+				}
+
+			});
+	}	
+	function update(){
+			$("#msg").html("");
+			$.ajax({
+				type:"POST",
+				url:link,
+				data:{
+					"st_id":$("#st_id").val(),
+					"st_name":$("#st_name").val(),
+					"store_type_update":true
+				}
+			}).done((res)=>{
+				let data=JSON.parse(res);
+				if(data.status){
+					$("#modal_store_type").modal('toggle');
+					$("#st_name").val("");
+					load_store_type();
+				}else{
+					$("#msg").html("<div style='color:#bd4646'>"+data.msg+"</div>");
+				}
+
+			});
+	}	
+	function del(){
+			$("#msg").html("");
+			$.ajax({
+				type:"POST",
+				url:link,
+				data:{
+					"st_id":$("#st_id").val(),
+					"store_type_del":true
+				}
+			}).done((res)=>{
+				let data=JSON.parse(res);
+				if(data.status){
+					$("#modal_store_type").modal('toggle');
+					load_store_type();
+				}else{
+					$("#msg").html("<div style='color:#bd4646'>"+data.msg+"</div>");
+				}
+
+			});
+	}
+	function load_store_type(){
+			let txt;
+			$.ajax({
+				type:"POST",
+				url:link,
+				data:"load_store_type"
+			}).done((res)=>{
+				let data=JSON.parse(res);
+				if(!data.msg){
+					$.each(data,(i, item)=>{
+						txt+=`<tr>
+					        <td>${i+1}</td>
+					        <td>${item.st_name}</td>
+					        <td><button type="button" onclick="sh_data(${item.st_id},'${item.st_name}')" class="btn">
+				        		<i class="fas fa-book-open fa-2x"></i>
+				        	</button></td>
+						</tr>`
+					});
+				}else{
+					txt=`<tr><td colspan='3'>no data</td></tr>`;
+				}
+				$("#store_content").html(txt);
+			});
+	}
+	load_store_type();
+</script>
+
