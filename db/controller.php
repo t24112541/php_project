@@ -51,17 +51,33 @@ class controller{
 		return json_encode($res);
 	}
 	function login($user,$pass){
-		$que=$this->conn->query("select u_id from p_user where u_email='{$user}' && u_password='{$pass}'");
-		if($que->num_rows==1){
-			$sh=$que->fetch_assoc();
+		$que_admin=$this->conn->query("select * from p_admin where a_username='{$user}' && a_password='{$pass}'");
+		if($que_admin->num_rows==1){
+			$sh=$que_admin->fetch_assoc();
 			$res=[
 				"status"=>1,
-				"u_id"=>$sh['u_id']
+				"id"=>$sh['a_id'],
+				"name"=>$sh['a_name'],
+				"lname"=>$sh['a_lname'],
+				"u_status"=>"admin"
 			];
-		}else{$res=[
-				"status"=>0
-			];
-		}		
+		}else{
+			$que=$this->conn->query("select * from p_user where u_email='{$user}' && u_password='{$pass}'");
+			if($que->num_rows==1){
+				$sh=$que->fetch_assoc();
+				$res=[
+					"status"=>1,
+					"id"=>$sh['u_id'],
+					"name"=>$sh['u_name'],
+					"lname"=>$sh['u_lname'],
+					"u_status"=>$sh['u_status']
+				];
+			}else{$res=[
+					"status"=>0,
+					"msg"=>"ไม่พบ username password ดังกล่าว"
+				];
+			}		
+		}
 		$json=json_encode($res);
 		return $json;
 	}
@@ -75,11 +91,9 @@ class controller{
 			}else{
 				$val.="'".$value."'";
 			}
-			if($i!=count($data)){$field.=",";$val.=",";}
+			if($i!=count($data)-1){$field.=",";$val.=",";}
 			$i++;
 		}
-		$field.="u_status";
-		$val.="'1'";
 
 		return $this->insert("p_user",$field,$val);
 	}

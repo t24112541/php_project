@@ -1,3 +1,4 @@
+<?php session_start();?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,12 +11,15 @@
   <script src="./js/popper.min.js"></script>
   <script src="./js/bootstrap.min.js"></script>
   <script src="./js/cv_js.js?v=1006"></script>
+  <script src="./js/idle_check.js?v=1000"></script>
   <link href="./fontawesome/css/all.css" rel="stylesheet">
 </head>
 
 <body style="height:1500px">
 
-<?php require_once("./views/nav.php");?>
+<?php
+
+ require_once("./views/nav.php");?>
 <br>
 
 <div class="container-fluid" id="content" style="margin-top:80px">

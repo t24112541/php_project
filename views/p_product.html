@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Bootstrap Example</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="../css/bootstrap.min.css">
+  <link rel="stylesheet" href="../css/cv_style.css?v=1002">
+  <script src="../js/jquery-3.4.1.js"></script>
+  <script src="../js/popper.min.js"></script>
+  <script src="../js/bootstrap.min.js"></script>
+  <script src="../js/cv_js.js?v=1011"></script>
+  <link href="../fontawesome/css/all.css" rel="stylesheet">
+</head>
+<body>
+<div align="center" class="container" id="content_box">
+	<div  class="card col-sm-12 col-md-12 ">
+		<div  class="card-body">
+			<h4>สินค้า</h4>
+				<div align="right" class="col-md-12">
+					<button type="button" onclick="open_add()" class="btn" data-toggle="modal" data-target="#modal_p_product">
+						<i class="fas fa-plus-square fa-2x"></i>
+					</button>
+
+					<button type="button" class="btn"></button>
+				</div>
+			<table class="table table-hover">
+				<thead>
+					<tr>
+						<th>ลำดับ</th>
+						<th>ชื่อสินค้า</th>
+						<th>จำนวน</th>
+						<th>ราคาขาย</th>
+						<th>ดู</th>
+					</tr>
+				</thead>
+			    <tbody id="p_product_content">
+			      
+			    </tbody>
+			  </table>
+	 <!-- The Modal -->
+	<div class="modal fade" id="modal_p_product" >
+		<div class="modal-dialog modal-lg" >
+			<div class="modal-content">
+	        <!-- Modal Header -->
+				<div class="modal-header" id="head_stage">
+					<h4 class="modal-title">ข้อมูลสินค้า</h4>
+					<button type="button" onclick="clear_input()" class="close" data-dismiss="modal">&times;</button>
+				</div>
+	        <!-- Modal body -->
+	        <form id="frm_p_product" enctype="multipart/form-data">
+				<div class="modal-body">
+					<div class="col-md-12 mb-12">
+				      <label class="cv_keep-left" for="p_img"></label>
+					    <div class="input-group">
+					        <div align="center">
+					        	<img id="sh_img" class="rounded" width="50%">
+					        </div>
+					    </div>
+				    </div>
+					<div class="col-md-12 mb-12">
+				      <label class="cv_keep-left" for="p_name">ชื่อสินค้า</label>
+					    <div class="input-group">
+					        <div class="input-group-prepend">
+					          <span class="input-group-text" ><i class="fas fa-tags"></i></span>
+					        </div>
+					        <input type="hidden" name="p_id" id="p_id">
+					        <input type="text" class="form-control" id="p_name" name="p_name" oninvalid="this.setCustomValidity('ชื่อสินค้า')"required oninput="this.setCustomValidity('')" placeholder="ชื่อสินค้า">
+					    </div>
+				    </div>
+				    <div class="col-md-12 mb-12">
+				      <label class="cv_keep-left" for="p_amount">จำนวนสินค้า</label>
+					    <div class="input-group">
+					        <div class="input-group-prepend">
+					          <span class="input-group-text" ><i class="fas fa-tag"></i></span>
+					        </div>
+					        <input type="number" class="form-control" id="p_amount" name="p_amount" oninvalid="this.setCustomValidity('จำนวนสินค้าที่มี')" required oninput="this.setCustomValidity('')" placeholder="จำนวนสินค้าที่มี">
+					    </div>
+				    </div>
+				    <div class="col-md-12 mb-12">
+				      <label class="cv_keep-left" for="p_price">ราคา</label>
+					    <div class="input-group">
+					        <div class="input-group-prepend">
+					          <span class="input-group-text" ><i class="fas fa-key"></i></i></span>
+					        </div>
+					        <input type="number" class="form-control" id="p_price" name="p_price" oninvalid="this.setCustomValidity('ราคาขาย')"required oninput="this.setCustomValidity('')" placeholder="ราคาขาย">
+					    </div>
+					
+				    </div>
+				    <div class="col-md-12 mb-12">
+				      <label class="cv_keep-left" for="p_price">ร้านค้า</label>
+					    <div class="input-group">
+					        <div class="input-group-prepend">
+					          <span class="input-group-text" ><i class="fas fa-key"></i></span>
+					        </div>
+					        <select class="form-control" id="s_id" name="s_id" oninvalid="this.setCustomValidity('ร้านค้า')"required oninput="this.setCustomValidity('')">
+					        </select>
+					    </div>
+				    </div>
+				    <div class="col-md-12 mb-12">
+				      <label class="cv_keep-left" for="p_img">ภาพ</label>
+					    <div class="input-group">
+					        <div class="input-group-prepend">
+					          <span class="input-group-text" ><i class="fas fa-images"></i></span>
+					        </div>
+					        <button type="button" onclick="upload('#p_img')">เลือกรูปภาพ</button>
+					        <input class="form-control" type="file" onchange="img_preview(this,'sh_img')" id="p_img" name="p_img" class="" style="display:none">
+					    </div>
+				    </div>
+				    <div id="frm"></div>
+				    <div id="msg"></div>
+				</div>
+			
+	        <!-- Modal footer -->
+				<div class="modal-footer" id="modal_p_product_foot">	
+					<div id="mng"></div>
+				</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+</body>
+</html>
+
+<script type="text/javascript">
+	var data;
+	// -------------------------- onload ---------------------------//
+	let link="http://localhost/php_project/call_controller/api.php";
+	open_add();
+	load_p_product();
+	load_p_store();
+	// $("#modal_p_product").modal();
+	$("title").text(title());
+	
+
+	// ------------------------- function -------------------------//
+	function open_add(){
+		let txt=`<button id="btn_save" onclick="add()" type="button" class="btn btn-success" data-dismiss=""><i class="fas fa-save fa-1x"></i> บันทึก</button>`;
+		$("#mng").html(txt);
+	}
+	function sh_data(p_id,p_name,p_amount,p_price,p_date_import,s_id,p_img){
+		let sta=(p_amount==0?'สินค้าหมด':(p_amount<=5?'สินค้าเหลือน้อย':''));
+		let css=(p_amount<=5?$("#head_stage").css({"background-color":"#a75454","color":"#fff"}):$("#head_stage").css({"background-color":"#7ec282","color":"#fff"}));
+
+		
+		let txt=`<button id="btn_del" onclick="del()" type="button" class="btn btn-danger" data-dismiss=""><i class="fas fa-trash-alt fa-1x"></i> ลบ</button>
+		<button id="btn_save" onclick="update()" type="button" class="btn btn-success" data-dismiss=""><i class="fas fa-save fa-1x"></i> บันทึก</button>`;
+
+		
+		$("#sh_img").attr('src',p_img);
+		
+		$("#p_id").val(p_id);
+		$("#p_name").val(p_name);
+		$("#p_amount").val(p_amount);
+		$("#p_price").val(p_price);
+		$("#p_date_import").val(p_date_import);
+		$("#s_id").val(s_id);
+		$(sta).prop('checked', true);
+		$("#modal_p_product").modal();
+		
+		$("#frm").html(sta);
+		$("#mng").html(txt);
+	}
+	function clear_input(){
+		$("#p_id").val('');
+		$("#p_name").val('');
+		$("#p_amount").val('');
+		$("#p_price").val('');
+		$("#p_date_import").val('');
+		$("#s_id").val('');
+		$("#sh_img").attr('src','');
+	}
+	function add(){
+		$("#msg").html("");
+		let sta=0;
+		if($("#s_id").val()==""){sta++;}
+		if($("#p_name").val()==""){sta++;}
+		if($("#p_amount").val()==""){sta++;}
+		if($("#p_price").val()==""){sta++;}
+		if($("#p_date_import").val()==""){sta++;}
+		if(sta!=0){$("#frm_p_product").addClass("was-validated");return false;}
+		else{
+			let f_data=new FormData();
+			let data = $("#frm_p_product").serializeArray();
+			let files = $("#p_img")[0].files[0]; 
+			$.each(data,(key,val)=>{
+				f_data.append(val.name,val.value);
+			});
+			f_data.append("p_product_add",true);
+			f_data.append("p_img",files);
+			event.preventDefault();
+			$.ajax({
+				type: "POST",
+	 			url: link,
+	 			data: f_data,
+				contentType: false,
+				processData: false,
+			}).done((res)=> {
+				let data=JSON.parse(res);
+				if(data.status){
+					$("#modal_p_product").modal('toggle');
+					load_p_product();
+					clear_input();
+				}else{
+					$("#msg").html("<div style='color:#bd4646'>"+data.msg+"</div>");
+				}	 				
+	 		});
+		}
+	}	
+	function update(){
+			$("#msg").html("");
+			let f_data=new FormData();
+			let data = $("#frm_p_product").serializeArray();
+			let files = $("#p_img")[0].files[0]; 
+			$.each(data,(key,val)=>{
+				f_data.append(val.name,val.value);
+			});
+			f_data.append("p_product_update",true);
+			f_data.append("p_img",files);
+			event.preventDefault();
+
+				$.ajax({
+					type: "POST",
+		 			url: link,
+		 			data: f_data,
+					contentType: false,
+					processData: false,
+				}).done((res)=> {
+					let data=JSON.parse(res);
+					if(data.status){
+						$("#modal_p_product").modal('toggle');
+
+						load_p_product();
+						clear_input();
+					}else{
+						$("#msg").html("<div style='color:#bd4646'>"+data.msg+"</div>");
+					}
+				});	
+			
+	}	
+	function del(){
+			$("#msg").html("");
+			$.ajax({
+				type:"POST",
+				url:link,
+				data:{
+					"p_id":$("#p_id").val(),
+					"p_product_del":true
+				}
+			}).done((res)=>{
+				let data=JSON.parse(res);
+				if(data.status){
+					$("#modal_p_product").modal('toggle');
+					load_p_product();
+					clear_input();
+				}else{
+					$("#msg").html("<div style='color:#bd4646'>"+data.msg+"</div>");
+				}
+
+			});
+	}
+	function load_p_store(){
+		let txt=`<option value="0" disabled selected>เลือกร้านค้า</option>`;
+			$.ajax({
+				type:"POST",
+				url:link,
+				data:{
+					"load_p_store":true,
+					"filter":"p_store.s_status!=0"
+				}
+			}).done((res)=>{
+				let data=JSON.parse(res);
+				if(!data.msg){
+					$.each(data,(i, item)=>{
+						txt+=`<option value="${item.s_id}">${item.s_name}</option>`
+					});
+				}
+				$("#s_id").html(txt);
+			});
+	}
+	function load_p_product(filter){
+			let txt;
+			$.ajax({
+				type:"POST",
+				url:link,
+				data:{
+					"load_p_product":true,
+					"filter":filter
+				}
+			}).done((res)=>{
+				var data=JSON.parse(res);
+				if(!data.msg){
+					$.each(data,(i, item)=>{
+						let css=(item.p_amount<=5?`style="background-color:#a75454;color:#fff"`:`style="background-color:#7ec282;;color:#fff"`);
+						txt+=`<tr ${css}>
+					        <td>${i+1}</td>
+					        <td>${item.p_name}</td>
+					        <td>${item.p_amount}</td>
+					        <td><button style="color:#fff" type="button" onclick="sh_data('${item.p_id}','${item.p_name}','${item.p_amount}','${item.p_price}','${item.p_date_import}','${item.s_id}','${item.p_img}')" class="btn">
+				        		<i  class="fas fa-book-open fa-2x"></i>
+				        	</button>`;
+						
+					});
+				}else{
+					txt=`<tr><td colspan='3'>no data</td></tr>`;
+				}
+				$("#p_product_content").html(txt);
+			});
+	}
+
+</script>
+

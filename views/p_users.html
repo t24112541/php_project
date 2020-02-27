@@ -91,7 +91,7 @@
 					        <div class="input-group-prepend">
 					          <span class="input-group-text" ><i class="fas fa-key"></i></span>
 					        </div>
-					        <input type="password" class="form-control" id="u_password_confirm" name="u_password_confirm" oninvalid="this.setCustomValidity('ยืนยันรหัสผ่าน')"required oninput="this.setCustomValidity('')" placeholder="ยืนยันรหัสผ่าน">
+					        <input type="password" class="form-control" id="Confirm_Password" name="Confirm_Password" oninvalid="this.setCustomValidity('ยืนยันรหัสผ่าน')"required oninput="this.setCustomValidity('')" placeholder="ยืนยันรหัสผ่าน">
 					    </div>
 				    </div>
 				    <div class="col-md-12 mb-12">
@@ -101,6 +101,15 @@
 					          <span class="input-group-text" ><i class="fas fa-phone-square-alt"></i></span>
 					        </div>
 					        <input type="text" class="form-control" id="u_tel" name="u_tel" oninvalid="this.setCustomValidity('เบอร์โทร')"required oninput="this.setCustomValidity('')" maxlength="10" placeholder="081987654321">
+				      </div>
+				    </div>
+				    <div class="col-md-12 mb-12">
+				      <label class="cv_keep-left" for="u_address">ที่อยู่</label>
+					    <div class="input-group">
+					        <div class="input-group-prepend">
+					          <span class="input-group-text" ><i class="fas fa-address-book"></i></span>
+					        </div>
+					        <textarea id="u_address" name="u_address" class="form-control" oninvalid="this.setCustomValidity('ที่อยู่')"required oninput="this.setCustomValidity('')"></textarea> 
 				      </div>
 				    </div>
 				    <div class="col-md-12 mb-12">
@@ -116,11 +125,12 @@
 				    <div id="frm"></div>
 				    <div id="msg"></div>
 				</div>
-			</form>
+			
 	        <!-- Modal footer -->
 				<div class="modal-footer" id="modal_p_user_foot">	
 					<div id="mng"></div>
 				</div>
+				</form>
 			</div>
 		</div>
 	</div>
@@ -132,11 +142,9 @@
 	var data;
 	// -------------------------- onload ---------------------------//
 	let link="http://localhost/php_project/call_controller/api.php";
-	load_p_user();
-	load_store_type();
 	open_add();
 	load_p_user();
-	$("#modal_p_user").modal();
+	// $("#modal_p_user").modal();
 	$("title").text(title());
 	
 
@@ -145,7 +153,7 @@
 		let txt=`<button id="btn_save" onclick="add()" type="button" class="btn btn-success" data-dismiss=""><i class="fas fa-save fa-1x"></i> บันทึก</button>`;
 		$("#mng").html(txt);
 	}
-	function sh_data(u_id,u_email,u_password,u_name,u_lname,u_status,u_tel,u_img){
+	function sh_data(u_id,u_email,u_password,u_name,u_lname,u_status,u_tel,u_img,u_address){
 		let sta=(u_status==1?'#u_status1':(u_status==2?'#u_status2':'#u_status0'));
 		let css=(u_status==0?$("#head_stage").css({"background-color":"#a75454","color":"#fff"}):$("#head_stage").css({"background-color":"#7ec282","color":"#fff"}));
 
@@ -183,51 +191,64 @@
 		$("#u_name").val(u_name);
 		$("#u_lname").val(u_lname);
 		$("#u_email").val(u_email);
-
+		$("#u_tel").val(u_tel);
+		$("#u_address").val(u_address);
 		$(sta).prop('checked', true);
 		$("#modal_p_user").modal();
 		
 		$("#mng").html(txt);
 	}
 	function clear_input(){
+		$("#u_id").val('');
+		$("#u_name").val('');
+		$("#u_lname").val('');
+		$("#u_email").val('');
+		$("#u_tel").val('');
+		$("#u_password").val('');
+		$("#Confirm_Password").val('');
+		$("#u_address").val('');
 		$("#sh_img").attr('src','');
-		$("#u_name").val("");
-		$("#st_id").val("");
-		$("#u_id").val("");
 	}
 	function add(){
 		$("#msg").html("");
 		let sta=0;
-		if($("#st_id").val()===""){sta++;}
-		if($("#u_name").val()===""){sta++;}
-		if($("#u_id").val()===""){sta++;}
+		if($("#u_name").val()==""){sta++;}
+		if($("#u_lname").val()==""){sta++;}
+		if($("#u_email").val()==""){sta++;}
+		if($("#u_tel").val()==""){sta++;}
+		if($("#u_tel").val()==""){sta++;}
+		if($("#u_address").val()==""){sta++;}
 		if(sta!=0){$("#frm_p_user").addClass("was-validated");return false;}
 		else{
-			let f_data=new FormData();
-			let data = $("#frm_p_user").serializeArray();
-			let files = $("#u_img")[0].files[0]; 
-			$.each(data,(key,val)=>{
-				f_data.append(val.name,val.value);
-			});
-			f_data.append("p_user_add",true);
-			f_data.append("u_img",files);
-			event.preventDefault();
-			$.ajax({
-				type: "POST",
-	 			url: link,
-	 			data: f_data,
-				contentType: false,
-				processData: false,
-			}).done((res)=> {
-				let data=JSON.parse(res);
-				if(data.status){
-					$("#modal_p_user").modal('toggle');
-					load_p_user();
-					clear_input();
-				}else{
-					$("#msg").html("<div style='color:#bd4646'>"+data.msg+"</div>");
-				}	 				
-	 		});
+			if(($("#u_password").val()==$("#Confirm_Password").val())){
+				let f_data=new FormData();
+				let data = $("#frm_p_user").serializeArray();
+				let files = $("#u_img")[0].files[0]; 
+				$.each(data,(key,val)=>{
+					f_data.append(val.name,val.value);
+				});
+				f_data.append("regist",true);
+				f_data.append("u_img",files);
+				event.preventDefault();
+				$.ajax({
+					type: "POST",
+		 			url: link,
+		 			data: f_data,
+					contentType: false,
+					processData: false,
+				}).done((res)=> {
+					let data=JSON.parse(res);
+					if(data.status){
+						$("#modal_p_user").modal('toggle');
+						load_p_user();
+						clear_input();
+					}else{
+						$("#msg").html("<div style='color:#bd4646'>"+data.msg+"</div>");
+					}	 				
+		 		});
+			}else{
+				$("#msg").html("<div style='color:#bd4646'>"+"ขั้นตอนยืนยันรหัสผ่านไม่ถูกต้อง"+"</div>");
+			}
 		}
 	}	
 	function update(){
@@ -241,24 +262,28 @@
 			f_data.append("p_user_update",true);
 			f_data.append("u_img",files);
 			event.preventDefault();
-			$.ajax({
-				type: "POST",
-	 			url: link,
-	 			data: f_data,
-				contentType: false,
-				processData: false,
-			}).done((res)=> {
-				let data=JSON.parse(res);
-				if(data.status){
-					$("#modal_p_user").modal('toggle');
-					$("#t_name").val("");
-					load_p_user();
-					clear_input();
-				}else{
-					$("#msg").html("<div style='color:#bd4646'>"+data.msg+"</div>");
-				}
+			if(($("#u_password").val()==$("#Confirm_Password").val())){
+				$.ajax({
+					type: "POST",
+		 			url: link,
+		 			data: f_data,
+					contentType: false,
+					processData: false,
+				}).done((res)=> {
+					let data=JSON.parse(res);
+					if(data.status){
+						$("#modal_p_user").modal('toggle');
 
-			});
+						load_p_user();
+						clear_input();
+					}else{
+						$("#msg").html("<div style='color:#bd4646'>"+data.msg+"</div>");
+					}
+				});	
+			}else{
+				$("#msg").html("<div style='color:#bd4646'>"+"ขั้นตอนยืนยันรหัสผ่านไม่ถูกต้อง"+"</div>");
+			}
+			
 	}	
 	function del(){
 			$("#msg").html("");
@@ -266,7 +291,7 @@
 				type:"POST",
 				url:link,
 				data:{
-					"s_id":$("#s_id").val(),
+					"u_id":$("#u_id").val(),
 					"p_user_del":true
 				}
 			}).done((res)=>{
@@ -281,38 +306,7 @@
 
 			});
 	}
-	function load_store_type(){
-		let txt=`<option value="0" disabled selected>เลือกประเภทผู้ใช้</option>`;
-			$.ajax({
-				type:"POST",
-				url:link,
-				data:"load_store_type"
-			}).done((res)=>{
-				let data=JSON.parse(res);
-				if(!data.msg){
-					$.each(data,(i, item)=>{
-						txt+=`<option value="${item.st_id}">${item.st_name}</option>`
-					});
-				}
-				$("#st_id").html(txt);
-			});
-	}
-	function load_p_user(){
-		let txt=`<option value="0" disabled selected>เลือกเจ้าของร้าน</option>`;
-			$.ajax({
-				type:"POST",
-				url:link,
-				data:"load_p_user"
-			}).done((res)=>{
-				let data=JSON.parse(res);
-				if(!data.msg){
-					$.each(data,(i, item)=>{
-						txt+=`<option value="${item.u_id}">${item.u_name+' '+item.u_lname}</option>`
-					});
-				}
-				$("#u_id").html(txt);
-			});
-	}
+
 	function load_p_user(filter){
 			let txt;
 			$.ajax({
@@ -326,13 +320,14 @@
 				var data=JSON.parse(res);
 				if(!data.msg){
 					$.each(data,(i, item)=>{
-						let sta=(item.u_status==1?'online':'เพิกถอนสิทธิ');
-						let css=(item.u_status==1?`style="background-color:#7ec282;color:#fff"`:`style="background-color:#a75454;;color:#fff"`);
+						// console.log(item.u_img);
+						let sta=(item.u_status==1?'ผู้ใช้ทั่วไป':(item.u_status==2?'เจ้าของร้าน':'ระงับสิทธิ'));
+						let css=(item.u_status==0?`style="background-color:#a75454;color:#fff"`:`style="background-color:#7ec282;;color:#fff"`);
 						txt+=`<tr ${css}>
 					        <td>${i+1}</td>
-					        <td>${item.u_name}</td>
+					        <td>${item.u_name+"&nbsp;&nbsp; "+item.u_lname}</td>
 					        <td>${sta}</td>
-					        <td><button style="color:#fff" type="button" onclick="sh_data('${item.s_id}','${item.u_name}','${item.st_id}','${item.u_id}','${item.u_status}','${item.u_img}')" class="btn">
+					        <td><button style="color:#fff" type="button" onclick="sh_data('${item.u_id}','${item.u_email}','${item.u_password}','${item.u_name}','${item.u_lname}','${item.u_status}','${item.u_tel}','${item.u_img}','${item.u_address}')" class="btn">
 				        		<i  class="fas fa-book-open fa-2x"></i>
 				        	</button>`;
 						

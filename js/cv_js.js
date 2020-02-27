@@ -23,17 +23,37 @@ $(document).ready(function(){
 			$("#myModal").modal();
 		});
 	}
-	
+	$('#frm_login').keyup(function(e){
+	    if(e.keyCode == 13){
+	        login();
+	    }
+	});
 	$("#btn_login").click(function(){
-		$.get("./call_controller/api.php",{
+		login();
+	});
+	function login(){
+		$("#modal_login").html("");
+		$.get(link,{
 			login:true,
 			u_username:$("#u_username").val(),
 			u_password:$("#u_password").val()
 		},function(res){
-			$("#modal_login").html(res);
-			$("#myModal").modal();
+			let data=JSON.parse(res);
+			
+			console.log(data);
+			if(data.status==1){
+				sessionStorage.setItem("id", data.id);
+				sessionStorage.setItem("name", data.name);
+				sessionStorage.setItem("lname", data.lname);
+				sessionStorage.setItem("u_status", data.u_status);
+				window.location.href=weblink;
+			}else{
+				$("#modal_login").html(data.msg);
+				$("#myModal").modal();
+			}
+			
 		});
-	});
+	}
 	$("#btn_regist").click(function(){
 		window.location.href="./views/regist.html";
 	});
@@ -47,6 +67,7 @@ $(document).ready(function(){
 		if($("#u_name").val()===""){sta++;}
 		if($("#u_lname").val()===""){sta++;}
 		if($("#u_tel").val()===""){sta++;}
+		if($("#u_address").val()===""){sta++;}
 		if($("#u_password").val()!=$("#Confirm_Password").val()){sta++;
 			$("#sh_msg").html("<div style='color:#dc3545'>ยืนยัน password ไม่ถูกต้อง</div>");
 		}
