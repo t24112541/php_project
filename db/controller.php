@@ -1,4 +1,5 @@
 <?php 
+ob_start();
 class controller{
 	private $conn;
 	function __construct($host,$user,$pass,$db){
@@ -37,6 +38,9 @@ class controller{
 		}
 		return $macAddr;
 	}
+	function rand_token(){
+		return md5(rand(10,100));
+	}
 	function chk_connect(){
 		if($this->conn->connect_error){
 			$res=[
@@ -51,26 +55,40 @@ class controller{
 		return json_encode($res);
 	}
 	function login($user,$pass){
-		$que_admin=$this->conn->query("select * from p_admin where a_username='{$user}' && a_password='{$pass}'");
-		if($que_admin->num_rows==1){
+		$token_id=$this->rand_token();
+		$token=(isset($_COOKIE['token'])&&$_COOKIE['token']!=""?"&& p_log.log_mac=='{$_COOKIE['token']}'":"&& p_log.log_mac!='{$token_id}'");
+
+		$que_admin=$this->conn->query("select * from p_admin where p_admin.a_username='{$user}' && p_admin.a_password='{$pass}'");
+		if($que_admin->num_rows>0){
 			$sh=$que_admin->fetch_assoc();
+			$field_log="u_id,log_status,log_mac";
+			$val_log="'{$sh['a_id']}','1','{$token_id}'";
+
+			$que_log=json_decode(($this->insert("p_log",$field_log,$val_log)));	
+			// setcookie("token",$token_id);
 			$res=[
 				"status"=>1,
 				"id"=>$sh['a_id'],
 				"name"=>$sh['a_name'],
 				"lname"=>$sh['a_lname'],
-				"u_status"=>"admin"
+				"u_status"=>"admin",
+				"log_id"=>$que_log->last_id
 			];
 		}else{
-			$que=$this->conn->query("select * from p_user where u_email='{$user}' && u_password='{$pass}'");
+			$que=$this->conn->query("select * from p_user where u_email='{$user}' && u_password='{$pass}' && u_status!=0");
 			if($que->num_rows==1){
 				$sh=$que->fetch_assoc();
+				$field_log="u_id,log_status,log_mac";
+				$val_log="'{$sh['u_id']}','1','{$token_id}'";
+
+				$que_log=json_decode(($this->insert("p_log",$field_log,$val_log)));	
 				$res=[
 					"status"=>1,
 					"id"=>$sh['u_id'],
 					"name"=>$sh['u_name'],
 					"lname"=>$sh['u_lname'],
-					"u_status"=>$sh['u_status']
+					"u_status"=>$sh['u_status'],
+					"log_id"=>$que_log->last_id
 				];
 			}else{$res=[
 					"status"=>0,
@@ -107,7 +125,8 @@ class controller{
 		}else{
 			$res=[
 				"msg"=>"success",
-				"status"=>1
+				"status"=>1,
+				"last_id"=>$this->conn->insert_id
 			];
 		}return json_encode($res);
 
@@ -181,5 +200,5 @@ class controller{
 	}
 }
 	// $db=new controller("localhost","root","","project_php");
-	// var_dump($db->chk_connect());
+	// echo $db->rand_token();
 ?>

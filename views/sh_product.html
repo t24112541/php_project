@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- <head>
+  <title>Bootstrap Example</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="../css/bootstrap.min.css">
+  <link rel="stylesheet" href="../css/cv_style.css?v=1002">
+  <script src="../js/jquery-3.4.1.js"></script>
+  <script src="../js/popper.min.js"></script>
+  <script src="../js/bootstrap.min.js"></script>
+  <script src="../js/cv_js.js?v=1011"></script>
+  <link href="../fontawesome/css/all.css" rel="stylesheet">
+</head> -->
+<body>
+<div align="center" class="container" id="content_box">
+	<div class="row row-cols-2 row-cols-md-4" id="sh_product">
+		  
+	</div>
+</div>
+</body>
+</html>
+
+<script type="text/javascript">
+	load_p_product();
+	load_p_store();
+
+
+	function load_p_store(filter){
+		let ft="p_store.s_status!=0";
+		let txt=`<option value="0" disabled selected>เลือกร้านค้า</option>`;
+			$.ajax({
+				type:"POST",
+				url:link,
+				data:{
+					"load_p_store":true,
+					"filter":ft+"&&"+filter
+				}
+			}).done((res)=>{
+				let data=JSON.parse(res);
+				if(!data.msg){
+					$.each(data,(i, item)=>{
+						txt+=`<option value="${item.s_id}">${item.s_name}</option>`
+					});
+				}
+				$("#s_id").html(txt);
+			});
+	}
+	function load_p_product(filter){
+			let txt="";
+			$.ajax({
+				type:"POST",
+				url:link,
+				data:{
+					"load_p_product":true,
+					"filter":filter
+				}
+			}).done((res)=>{
+				var data=JSON.parse(res);
+				if(!data.msg){
+					$.each(data,(i, item)=>{
+						let per=5;
+						let img=item.p_img.split("../");
+						let img1="./"+img[1];
+						let css=(item.p_amount<=5?`style="background-color:#a75454;color:#fff"`:`style="background-color:#7ec282;;color:#fff"`);
+						txt+=`<div class="col mb-4">
+							    <div class="card">
+							      <img src="${img1}" class="card-img-top" style="width:100px">
+							      <div class="card-body">
+							        <h5 class="card-title">${item.p_name}</h5>
+							        <p class="card-text"><strike style="color:red">${parseInt	(item.p_price)+per} บาท</strike>  <br>${item.p_price} บาท <u>ถูกลง ${per} บาท</u></p>
+							      </div>
+							       	<div class="card-footer">
+								      <small class="text-muted">
+								      	<button style="color:#fff" type="button" onclick="cart('${item.p_id}','${item.p_name}','${item.p_amount}','${item.p_price}','${item.p_date_import}','${item.s_id}','${img1}')" class="btn btn-info">
+							        		<i class="fas fa-shopping-cart"></i></i>
+							        	</button>
+								      </small>
+								    </div>
+							    </div>
+							  </div>`;
+
+						// txt+=`<tr ${css}>
+					 //        <td>${i+1}</td>
+					 //        <td>${item.p_name}</td>
+					 //        <td>${item.p_amount}</td>
+					 //        <td><button style="color:#fff" type="button" onclick="sh_data('${item.p_id}','${item.p_name}','${item.p_amount}','${item.p_price}','${item.p_date_import}','${item.s_id}','${img1}')" class="btn">
+				  //       		<i  class="fas fa-book-open fa-2x"></i>
+				  //       	</button>`;
+						
+					});
+				}else{
+					txt=`<tr><td colspan='3'>no data</td></tr>`;
+				}
+				$("#sh_product").html(txt);
+			});
+	}
+</script>

@@ -11,6 +11,17 @@ function img_preview(img,target){
 	}
 	reader.readAsDataURL(img.files[0]);
 }
+add_cart();
+function add_cart(){
+	var crt={
+		"id":1,
+		"name":2,
+	};
+	console.log(crt);
+}
+function sh_cart(){
+
+}
 $(document).ready(function(){
 
 	let weblink="http://localhost/php_project/";

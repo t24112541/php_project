@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+<!-- <head>
   <title>Bootstrap Example</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -11,7 +11,7 @@
   <script src="../js/bootstrap.min.js"></script>
   <script src="../js/cv_js.js?v=1011"></script>
   <link href="../fontawesome/css/all.css" rel="stylesheet">
-</head>
+</head> -->
 <body>
 <div align="center" class="container" id="content_box">
 	<div  class="card col-sm-12 col-md-12 ">
@@ -119,7 +119,7 @@
 <script type="text/javascript">
 	var data;
 	// -------------------------- onload ---------------------------//
-	let link="http://localhost/php_project/call_controller/api.php";
+	// let link="http://localhost/php_project/call_controller/api.php";
 	load_p_store();
 	load_store_type();
 	open_add();
@@ -308,13 +308,15 @@
 				var data=JSON.parse(res);
 				if(!data.msg){
 					$.each(data,(i, item)=>{
+						let img=item.s_img.split("../");
+						let img1="./"+img[1];
 						let sta=(item.s_status==1?'online':'เพิกถอนสิทธิ');
 						let css=(item.s_status==1?`style="background-color:#7ec282;color:#fff"`:`style="background-color:#a75454;;color:#fff"`);
 						txt+=`<tr ${css}>
 					        <td>${i+1}</td>
 					        <td>${item.s_name}</td>
 					        <td>${sta}</td>
-					        <td><button style="color:#fff" type="button" onclick="sh_data('${item.s_id}','${item.s_name}','${item.st_id}','${item.u_id}','${item.s_status}','${item.s_img}')" class="btn">
+					        <td><button style="color:#fff" type="button" onclick="sh_data('${item.s_id}','${item.s_name}','${item.st_id}','${item.u_id}','${item.s_status}','${img1}')" class="btn">
 				        		<i  class="fas fa-book-open fa-2x"></i>
 				        	</button>`;
 						

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+<!-- <head>
   <title>Bootstrap Example</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -11,7 +11,7 @@
   <script src="../js/bootstrap.min.js"></script>
   <script src="../js/cv_js.js?v=1011"></script>
   <link href="../fontawesome/css/all.css" rel="stylesheet">
-</head>
+</head> -->
 <body>
 <div align="center" class="container" id="content_box">
 	<div  class="card col-sm-12 col-md-12 ">
@@ -141,7 +141,7 @@
 <script type="text/javascript">
 	var data;
 	// -------------------------- onload ---------------------------//
-	let link="http://localhost/php_project/call_controller/api.php";
+	// let link="http://localhost/php_project/call_controller/api.php";
 	open_add();
 	load_p_user();
 	// $("#modal_p_user").modal();
@@ -238,10 +238,11 @@
 					processData: false,
 				}).done((res)=> {
 					let data=JSON.parse(res);
-					if(data.status){
+					if(data.status){ 
 						$("#modal_p_user").modal('toggle');
 						load_p_user();
 						clear_input();
+						$("#frm_p_user").removeClass("was-validated");
 					}else{
 						$("#msg").html("<div style='color:#bd4646'>"+data.msg+"</div>");
 					}	 				
@@ -273,7 +274,7 @@
 					let data=JSON.parse(res);
 					if(data.status){
 						$("#modal_p_user").modal('toggle');
-
+						$("#frm_p_user").removeClass("was-validated");
 						load_p_user();
 						clear_input();
 					}else{
@@ -320,14 +321,16 @@
 				var data=JSON.parse(res);
 				if(!data.msg){
 					$.each(data,(i, item)=>{
-						// console.log(item.u_img);
+						let img=item.u_img.split("../");
+						let img1="./"+img[1];
+
 						let sta=(item.u_status==1?'ผู้ใช้ทั่วไป':(item.u_status==2?'เจ้าของร้าน':'ระงับสิทธิ'));
 						let css=(item.u_status==0?`style="background-color:#a75454;color:#fff"`:`style="background-color:#7ec282;;color:#fff"`);
 						txt+=`<tr ${css}>
 					        <td>${i+1}</td>
 					        <td>${item.u_name+"&nbsp;&nbsp; "+item.u_lname}</td>
 					        <td>${sta}</td>
-					        <td><button style="color:#fff" type="button" onclick="sh_data('${item.u_id}','${item.u_email}','${item.u_password}','${item.u_name}','${item.u_lname}','${item.u_status}','${item.u_tel}','${item.u_img}','${item.u_address}')" class="btn">
+					        <td><button style="color:#fff" type="button" onclick="sh_data('${item.u_id}','${item.u_email}','${item.u_password}','${item.u_name}','${item.u_lname}','${item.u_status}','${item.u_tel}','${img1}','${item.u_address}')" class="btn">
 				        		<i  class="fas fa-book-open fa-2x"></i>
 				        	</button>`;
 						

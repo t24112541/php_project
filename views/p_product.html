@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+<!-- <head>
   <title>Bootstrap Example</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -11,7 +11,7 @@
   <script src="../js/bootstrap.min.js"></script>
   <script src="../js/cv_js.js?v=1011"></script>
   <link href="../fontawesome/css/all.css" rel="stylesheet">
-</head>
+</head> -->
 <body>
 <div align="center" class="container" id="content_box">
 	<div  class="card col-sm-12 col-md-12 ">
@@ -30,7 +30,6 @@
 						<th>ลำดับ</th>
 						<th>ชื่อสินค้า</th>
 						<th>จำนวน</th>
-						<th>ราคาขาย</th>
 						<th>ดู</th>
 					</tr>
 				</thead>
@@ -54,7 +53,7 @@
 				      <label class="cv_keep-left" for="p_img"></label>
 					    <div class="input-group">
 					        <div align="center">
-					        	<img id="sh_img" class="rounded" width="50%">
+					        	<center><img id="sh_img" class="rounded" width="50%">
 					        </div>
 					    </div>
 				    </div>
@@ -126,10 +125,10 @@
 <script type="text/javascript">
 	var data;
 	// -------------------------- onload ---------------------------//
-	let link="http://localhost/php_project/call_controller/api.php";
+	// let link="http://localhost/php_project/call_controller/api.php";
 	open_add();
-	load_p_product();
-	load_p_store();
+	(sessionStorage.getItem("u_status")==2?load_p_product("u_id="+sessionStorage.getItem("id")):load_p_product());
+	(sessionStorage.getItem("u_status")==2?load_p_store("p_user.u_id="+sessionStorage.getItem("id")):load_p_store());
 	// $("#modal_p_product").modal();
 	$("title").text(title());
 	
@@ -200,7 +199,7 @@
 				let data=JSON.parse(res);
 				if(data.status){
 					$("#modal_p_product").modal('toggle');
-					load_p_product();
+					(sessionStorage.getItem("u_status")==2?load_p_product("u_id="+sessionStorage.getItem("id")):load_p_product());
 					clear_input();
 				}else{
 					$("#msg").html("<div style='color:#bd4646'>"+data.msg+"</div>");
@@ -231,7 +230,7 @@
 					if(data.status){
 						$("#modal_p_product").modal('toggle');
 
-						load_p_product();
+						(sessionStorage.getItem("u_status")==2?load_p_product("u_id="+sessionStorage.getItem("id")):load_p_product());
 						clear_input();
 					}else{
 						$("#msg").html("<div style='color:#bd4646'>"+data.msg+"</div>");
@@ -252,7 +251,7 @@
 				let data=JSON.parse(res);
 				if(data.status){
 					$("#modal_p_product").modal('toggle');
-					load_p_product();
+					(sessionStorage.getItem("u_status")==2?load_p_product("u_id="+sessionStorage.getItem("id")):load_p_product());
 					clear_input();
 				}else{
 					$("#msg").html("<div style='color:#bd4646'>"+data.msg+"</div>");
@@ -260,14 +259,15 @@
 
 			});
 	}
-	function load_p_store(){
+	function load_p_store(filter){
+		let ft="p_store.s_status!=0";
 		let txt=`<option value="0" disabled selected>เลือกร้านค้า</option>`;
 			$.ajax({
 				type:"POST",
 				url:link,
 				data:{
 					"load_p_store":true,
-					"filter":"p_store.s_status!=0"
+					"filter":ft+"&&"+filter
 				}
 			}).done((res)=>{
 				let data=JSON.parse(res);
@@ -292,12 +292,14 @@
 				var data=JSON.parse(res);
 				if(!data.msg){
 					$.each(data,(i, item)=>{
+						let img=item.p_img.split("../");
+						let img1="./"+img[1];
 						let css=(item.p_amount<=5?`style="background-color:#a75454;color:#fff"`:`style="background-color:#7ec282;;color:#fff"`);
 						txt+=`<tr ${css}>
 					        <td>${i+1}</td>
 					        <td>${item.p_name}</td>
 					        <td>${item.p_amount}</td>
-					        <td><button style="color:#fff" type="button" onclick="sh_data('${item.p_id}','${item.p_name}','${item.p_amount}','${item.p_price}','${item.p_date_import}','${item.s_id}','${item.p_img}')" class="btn">
+					        <td><button style="color:#fff" type="button" onclick="sh_data('${item.p_id}','${item.p_name}','${item.p_amount}','${item.p_price}','${item.p_date_import}','${item.s_id}','${img1}')" class="btn">
 				        		<i  class="fas fa-book-open fa-2x"></i>
 				        	</button>`;
 						

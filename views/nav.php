@@ -7,8 +7,9 @@
 	      <input type="text" class="form-control" placeholder="ค้นหา" aria-label="Username" aria-describedby="basic-addon1">
 	    </div> -->
 	</form>
-	<hr style="background-color: #fff"/>
-	
+	<!-- <hr style="background-color: #fff"/> -->
+		<div id="user">
+		</div>
 	  	<div id="default_menu_box">
 		</div>
 	  	<div id="mng_menu_box">
@@ -19,16 +20,28 @@
 	<button class="cv_ico-toggle" type="button" onclick="openNav()" >
 		<i style="color:#fff" class="fas fa-align-justify"></i>
   	</button>
-	<a class="navbar-brand" href="#"><i class="fas fa-dolly-flatbed"></i> Shopa</a>
+	<a class="navbar-brand" href="?"><i class="fas fa-dolly-flatbed"></i> Shopa</a>
 	<ul class="navbar-nav mr-auto">
+
 	</ul>
-  	<a class="navbar-brand" href="?logout"><i class="fas fa-sign-out-alt"></i> logout</a>
+	<div class="col-sm-1">
+		<button style="color:#fff" type="button" onclick="sh_cart('${item.p_id}','${item.p_name}','${item.p_amount}','${item.p_price}','${item.p_date_import}','${item.s_id}','${img1}')" class="btn btn-info">
+			<i class="fas fa-shopping-cart"></i> <i id="amount"></i>
+		</button>
+	</div>
+	<div id="log"><a style="font-size:14px" class="navbar-brand" href="?login"><i class="fas fa-sign-in-alt"></i> login</a></div>
+  	
 </nav>
 <script>
 let stg=0;
 let weblink="http://localhost/php_project/";
 let link="http://localhost/php_project/call_controller/api.php";
 load_menu();
+cart();
+function cart(){
+	$("#amount").text(sessionStorage.getItem("cart").length);
+	console.log("cart");
+}
 function openNav() {
     stg++;
     if(stg%2==1){
@@ -38,8 +51,18 @@ function openNav() {
     }
   
 }
+$("#logout").click(()=>{
+	sessionStorage.removeItem("id");
+	sessionStorage.removeItem("name");
+	sessionStorage.removeItem("lname");
+	sessionStorage.removeItem("u_status");
+	window.location.href=weblink;
+});
 function load_menu(){
-	let default_menu="<i/>";
+	let user=`<a href="#"><i class="fas fa-user"></i> ${sessionStorage.getItem("name")+" "+sessionStorage.getItem("lname")}</a>
+	<hr style="background-color: #fff"/>`;
+	let logout=`<a style="font-size:14px" class="navbar-brand" href="#" id="logout"><i class="fas fa-sign-out-alt"></i> logout</a>`;
+	let default_menu=`<i/>`;
 	$.ajax({
 		type:"POST",
 		data:"load_p_type",
@@ -51,17 +74,30 @@ function load_menu(){
 		});
 		
 		$("#default_menu_box").html(default_menu);
+		
 	});
-	let txt=`<hr style="background-color: #fff"/>`;
+	let txt=`<i/>`;
 	if(sessionStorage.getItem("u_status")=="admin"){
-		txt+=`	<a href="?p_product"><i class="fab fa-product-hunt"></i> จัดการสินค้า</a>
+		txt+=`	<hr style="background-color: #fff"/>
+				<a href="?p_product"><i class="fab fa-product-hunt"></i> จัดการสินค้า</a>
 				<a href="?store_type"><i class="fas fa-folder"></i> จัดการประเภทร้านค้า</a>
 				<a href="?p_store"><i class="fas fa-store"></i> จัดการร้านค้า</a>
 				<a href="?p_type"><i class="fas fa-folder"></i> จัดการประเภทสินค้า</a>
 				<a href="?p_users"><i class="fas fa-users"></i> จัดการผู้คน</a>
 			`;
+	
+	
+	}else if(sessionStorage.getItem("u_status")=="2"){
+		txt+=`	<hr style="background-color: #fff"/>
+				<a href="?p_product"><i class="fab fa-product-hunt"></i> จัดการสินค้า</a>	
+			`;
 	}
 	$("#mng_menu_box").html(txt);
+	if(sessionStorage.getItem("u_status")=="admin" || sessionStorage.getItem("u_status")=="1" || sessionStorage.getItem("u_status")=="2"){
+		$("#log").html(logout);
+		$("#user").html(user);
+	}
+	
 }
 
 </script>

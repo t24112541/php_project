@@ -1,5 +1,6 @@
 <?php
 session_start();
+ob_start();
 // $_SESSION['u_id']=1010101;
 // session_destroy();
 	require_once("../db/controller.php");
@@ -9,8 +10,7 @@ session_start();
 		if($con_chk->status==1){
 			$res=($db->login($_GET['u_username'],$db->re_encode($_GET['u_password'])));
 			// $db->get_arr($res);
-			
-				echo $res;
+			 echo $res;
 			
 		}else{
 			echo $con_chk->msg;
@@ -104,11 +104,10 @@ session_start();
 			$pass=$db->re_encode($_POST['u_password']);
 			$field_update.=",u_password='{$pass}'";
 		}
-		// echo $field_update;
 		echo $db->update("p_user",$field_update,"u_id='{$_POST['u_id']}'");
 	}
 	else if(isset($_POST['load_p_product'])){
-		if(isset($_POST['filter'])){$where="where ".$_POST['filter'];}
+		if(isset($_POST['filter'])){$where="where p_store.s_id = p_product.s_id && p_store.s_id = p_product.s_id && ".$_POST['filter'];}
 		else{$where="where p_store.s_id = p_product.s_id && p_store.s_id = p_product.s_id ";}
 		echo $db->select("p_product,p_store","*",$where);
 	}
@@ -137,5 +136,9 @@ session_start();
 		}
 
 		echo $db->insert("p_product","p_name,p_amount,p_price,p_date_import,s_id,p_img","'{$_POST['p_name']}','{$_POST['p_amount']}','{$_POST['p_price']}','{$_POST['p_date_import']}','{$_POST['s_id']}','{$data['p_img']}'");
+	}
+	else if(isset($_GET['logout'])){
+		$field_update="log_status=0";
+		echo $db->update("p_product",$field_update,"logout='{$_POST['logout']}'");
 	}
 ?>
